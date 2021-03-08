@@ -1,0 +1,4 @@
+#evita ir al docker engine y | excepciones
+**/*
+!src
+!Dockerfile
