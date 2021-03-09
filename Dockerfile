@@ -8,4 +8,4 @@ COPY src .
 RUN apk add php
 #php index.php se traduce en los 2 siguientes comandos
 ENTRYPOINT {"/usr/bin/php"}
-CMD {"-f", "index.php", "-S", "0.0.0.0:8080"}
+CMD ["-f", "index.php", "-S", "0.0.0.0:8080"]
