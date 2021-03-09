@@ -1,4 +1,6 @@
 #evita ir al docker engine y | excepciones
+#para evitar ir al docker engine
 **/*
+#Excepciones:
 !src
 !Dockerfile
