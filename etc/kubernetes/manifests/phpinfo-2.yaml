@@ -1,0 +1,122 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpinfo-2
+spec:
+  replicas: 2
+  selector:
+    #etiquetas que van en los pods para que sean desplegados por esta configuracion
+    matchLabelds:
+      app: phpinfo-2
+  template: 
+    metadata: 
+      labels: 
+        app: phpinfo-2
+    spec: 
+      containers: 
+      - name: phpinfo-2
+        image: crivases/phpinfo-2:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          tcpSocket: 
+            port: 8080
+          #numero de veces que pueda falla antes de reiniciar y cada cuanto se hace
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreadhold: 1
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreadhold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100m
+          requests:
+            cpu: 100m
+            memory: 100m            
+---            
+#segundo objeto            
+#politica de red/cortafuegos, esta politica cierra toda la comunicacion entre pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+spec:
+  #aplica la política a todos los pods al dejarlo vacío, dejaria bloqueado el acceso
+  podSelector:
+  policyTypes: 
+  - Ingress
+---
+#regla de apertura para los pod con la etiqueta app:phpinfo-2 y puerto 8080
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: phpinfo-2
+spec:
+  ingress:
+  - ports:
+    - port: 8080
+  podSelector: 
+    matchLabels:
+      app: phpinfo-2
+  policyTypes: 
+  - Ingress
+---
+#creacion de un servicio interno, hay que crear un balanceador de carga hacia los pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpinfo-2
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: phpinfo-2
+  type: ClusterIP
+---  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+            
+            
+            
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
